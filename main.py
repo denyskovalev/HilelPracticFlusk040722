@@ -1,5 +1,7 @@
-from flask import Flask
+
+from flask import Flask, request
 from utils import hello_user, list_requirements, fake_names_emails, people_space_count, mean_weight_height
+import sqlite3
 
 app = Flask(__name__)
 
@@ -38,9 +40,87 @@ def space():
 @app.route('/mean')
 def mean():
     data = mean_weight_height()
-    data_html = f'<br>Average height - {data[1] * 2.54}</br>' \
-                f'<br>Average weight - {data[2] * 0.45359}</br>'
+    data_html = f'<br>Average height - {data[1] * 2.54} cm</br>' \
+                f'<br>Average weight - {data[2] * 0.45359} kg</br>'
     return data_html
+
+###############################
+
+
+@app.route('/emails/create')
+def email_create():
+    email = request.args['email']
+    name = request.args['name']
+
+    try:
+        conn = sqlite3.connect('users.db')
+        cur = conn.cursor()
+        sql = f'''
+        INSERT INTO emails
+        VALUES ('{name}', '{email}');
+        '''
+        cur.execute(sql)
+        conn.commit()
+    finally:
+        conn.close()
+
+    return 'Emails create'
+
+
+@app.route('/emails/read')
+def email_read():
+
+    try:
+        conn = sqlite3.connect('users.db')
+        cur = conn.cursor()
+        sql = f'''
+        SELECT * FROM emails;
+        '''
+        cur.execute(sql)
+        emails = cur.fetchall()
+    finally:
+        conn.close()
+
+    return str(emails)
+
+
+@app.route('/emails/delete')
+def email_delete():
+    email = request.args['email']
+
+    try:
+        conn = sqlite3.connect('users.db')
+        cur = conn.cursor()
+        sql = f'''
+        DELETE FROM emails WHERE Email == '{email}';
+        '''
+        cur.execute(sql)
+        conn.commit()
+    finally:
+        conn.close()
+
+    return 'Email delete'
+
+
+@app.route('/emails/update')
+def email_update():
+    email = request.args['email']
+    name = request.args['name']
+
+    try:
+        conn = sqlite3.connect('users.db')
+        cur = conn.cursor()
+        sql = f'''
+        UPDATE emails
+        SET UserName = '{name}'
+        WHERE Email = '{email}';
+        '''
+        cur.execute(sql)
+        conn.commit()
+    finally:
+        conn.close()
+
+    return 'Emails create'
 
 
 if __name__ == '__main__':
