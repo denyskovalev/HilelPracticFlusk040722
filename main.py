@@ -175,7 +175,7 @@ def phones_update():
         sql = f'''
         UPDATE phones
         SET UserName = '{name}'
-        WHERE Email = '{phone}';
+        WHERE Phone = '{phone}';
         '''
         cur.execute(sql)
         conn.commit()
