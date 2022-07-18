@@ -44,7 +44,8 @@ def mean():
                 f'<br>Average weight - {data[2] * 0.45359} kg</br>'
     return data_html
 
-###############################
+
+# """less 2"""
 
 
 @app.route('/emails/create')
@@ -120,7 +121,86 @@ def email_update():
     finally:
         conn.close()
 
-    return 'Emails create'
+    return 'Emails update'
+
+
+# Homework less3
+
+
+@app.route('/phones/create')
+def phones_create():
+    phone = request.args['phone']
+    name = request.args['name']
+
+    try:
+        conn = sqlite3.connect('users.db')
+        cur = conn.cursor()
+        sql = f'''
+        INSERT INTO phones
+        VALUES ('{name}', '{phone}');
+        '''
+        cur.execute(sql)
+        conn.commit()
+    finally:
+        conn.close()
+
+    return 'Phones create/add'
+
+
+@app.route('/phones/read')
+def phones_read():
+
+    try:
+        conn = sqlite3.connect('users.db')
+        cur = conn.cursor()
+        sql = f'''
+        SELECT * FROM phones;
+        '''
+        cur.execute(sql)
+        phones = cur.fetchall()
+    finally:
+        conn.close()
+
+    return str(phones)
+
+
+@app.route('/phones/update')
+def phones_update():
+    phone = request.args['phone']
+    name = request.args['name']
+
+    try:
+        conn = sqlite3.connect('users.db')
+        cur = conn.cursor()
+        sql = f'''
+        UPDATE phones
+        SET UserName = '{name}'
+        WHERE Email = '{phone}';
+        '''
+        cur.execute(sql)
+        conn.commit()
+    finally:
+        conn.close()
+
+    return 'Phones update'
+
+
+@app.route('/phones/delete')
+def phones_delete():
+    phone = request.args['phone']
+
+    try:
+        conn = sqlite3.connect('users.db')
+        cur = conn.cursor()
+        sql = f'''
+        DELETE FROM phones WHERE Email == '{phone}';
+        '''
+        cur.execute(sql)
+        conn.commit()
+    finally:
+        conn.close()
+
+    return 'Phone delete'
 
 
 if __name__ == '__main__':
